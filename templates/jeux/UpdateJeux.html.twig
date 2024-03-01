@@ -1,0 +1,36 @@
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello JeuxController!{% endblock %}
+
+{% block body %}
+
+
+    <h1>JeuxController</h1>
+    <p>JeuxController</p>
+{#    
+ {{ form_start(form) }}
+
+ {{ form_row(form.name, {
+        'attr': {'placeholder': jeuxs[0].name}
+    }) }}
+    {{ form_row(form.publisher, {
+        'attr': {'placeholder': jeuxs[0].publisher}
+    }) }}
+    {{ form_row(form.studio, {
+        'attr': {'placeholder': jeuxs[0].studio}
+    }) }}
+
+ {{ form_end(form) }}
+  #}
+
+  {{ form(form)}}
+
+
+
+    
+
+
+
+{% endblock %}
