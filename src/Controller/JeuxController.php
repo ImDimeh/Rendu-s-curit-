@@ -33,8 +33,9 @@ class JeuxController extends AbstractController
         $game = new Jeux();
         $form = $this->createForm(JeuxType::class, $game);
         $form->handleRequest($r);
+        $roleUser = $this->getUser()->getRoles();
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && in_array('ROLE_ADMIN', $roleUser)) {
             $slug = $slugger->slug($game->getName() . '-' . uniqid());
             $game->setSlug($slug);
             // prepare the query
@@ -55,14 +56,15 @@ class JeuxController extends AbstractController
     {
         $game = $em->getRepository(Jeux::class)->findOneBy(['slug' => $slug]);
 
+        $roleUser = $this->getUser()->getRoles();
         if (!$game) {
             throw $this->createNotFoundException('No game found for slug ' . $slug);
         }
-        
+        if (!in_array('ROLE_ADMIN', $roleUser)) {
 
             $form = $this->createForm(JeuxType::class, $game);
             $form->handleRequest($r);
-        
+        }
 
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -85,11 +87,12 @@ class JeuxController extends AbstractController
     public function delete(EntityManagerInterface $em, $id, Request $r): Response
     {
         $game = $em->getRepository(Jeux::class)->find($id);
+        $roleUser = $this->getUser()->getRoles();   
 
         if (!$game) {
             throw $this->createNotFoundException('No game found for id ' . $id);
         }
-        if ($this->isCsrfTokenValid('delete' . $game->getId(), $r->request->get('csrf'))) {
+        if ($this->isCsrfTokenValid('delete' . $game->getId(), $r->request->get('csrf')) && in_array('ROLE_ADMIN', $roleUser)) {
 
             $em->remove($game);
             $em->flush();
